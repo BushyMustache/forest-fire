@@ -1,5 +1,11 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
+import javax.print.attribute.HashAttributeSet;
 
 public class Fire {
     /**
@@ -41,9 +47,32 @@ public class Fire {
     public static int timeToBurn(char[][] forest, int matchR, int matchC) {
         // HINT: when adding to your BFS queue, you can include more information than
         // just a location. What other information might be useful?
+        Location start = firstTreeLocation(forest, matchR, matchC);
+        int finalTime = 0;
 
-        // Implement this AND add more tests!!!
-        return -1;
+        Set<Location> visited = new HashSet<>();
+        Queue<Location> queue = new LinkedList<>();
+
+        queue.add(start);
+
+        while(!queue.isEmpty()){
+            Location current = queue.remove();
+            int row = current.row();
+            int column = current.column();
+            if(visited.contains(current)) continue;
+            visited.add(current);
+            
+            if(forest[row][column] == 'c'){
+                return finalTime; //change?
+            } 
+
+            List<Location> neighbors = possibleMoves(forest, current);
+            for(Location neighbor : neighbors){
+                queue.add(neighbor);
+            }
+        }
+        
+        throw new AllTreesBurnedException();
     }
 
     public static List<Location> possibleMoves(char[][] forest, Location current){
