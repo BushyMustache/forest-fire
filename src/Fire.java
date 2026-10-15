@@ -42,4 +42,18 @@ public class Fire {
         // Implement this AND add more tests!!!
         return -1;
     }
+
+    public static Location firstTreeLocation(char[][] forest, int matchR, int matchC) {
+        Location location = null;
+        for (int r = 0; r < forest.length; r++) {
+            for (int c = 0; c < forest[r].length; c++) {
+                if (r == matchR && c == matchC) {
+                    location = new Location(r, c);
+                }
+            }
+        }
+        if (location == null) throw new NoTreesException();
+
+        return location;
+    }
 }
