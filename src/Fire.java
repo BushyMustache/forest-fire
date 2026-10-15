@@ -52,6 +52,7 @@ public class Fire {
 
         Set<Location> visited = new HashSet<>();
         Queue<Location> queue = new LinkedList<>();
+        List<char[]> trees = new ArrayList<>();
 
         queue.add(start);
 
@@ -62,17 +63,21 @@ public class Fire {
             if(visited.contains(current)) continue;
             visited.add(current);
             
-            if(forest[row][column] == 'c'){
-                return finalTime; //change?
+            if(forest[row][column] == 't'){
+                char[] treeArray = new char[36];
+                trees.add(treeArray);
             } 
 
             List<Location> neighbors = possibleMoves(forest, current);
+
+            if (!possibleMoves(forest, current).isEmpty()) finalTime++;
+
             for(Location neighbor : neighbors){
                 queue.add(neighbor);
             }
         }
-        
-        throw new AllTreesBurnedException();
+
+        return finalTime;
     }
 
     public static List<Location> possibleMoves(char[][] forest, Location current){
