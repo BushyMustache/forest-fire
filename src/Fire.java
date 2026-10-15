@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import javax.print.attribute.HashAttributeSet;
-
 public class Fire {
     /**
      * Returns how long it takes for all vulnerable trees to be set on fire if a
