@@ -1,2 +1,2 @@
-public record Location(int row, int column) {
+public record Location(int row, int column, int time) {
 }

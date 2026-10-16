@@ -1,9 +1,7 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 
 public class Fire {
     /**
@@ -45,33 +43,31 @@ public class Fire {
     public static int timeToBurn(char[][] forest, int matchR, int matchC) {
         // HINT: when adding to your BFS queue, you can include more information than
         // just a location. What other information might be useful?
-        Location start = firstTreeLocation(forest, matchR, matchC);
-        int finalTime = 0;
 
-        Set<Location> visited = new HashSet<>();
+        // Validates the location of the starting tree
+        Location start = firstTreeLocation(forest, matchR, matchC);
+
+        boolean[][] visited = new boolean[forest.length][forest[0].length];
         Queue<Location> queue = new LinkedList<>();
-        List<char[]> trees = new ArrayList<>();
 
         queue.add(start);
+        visited[start.row()][start.column()] = true;
+
+        int finalTime = 0;
 
         while(!queue.isEmpty()){
             Location current = queue.remove();
-            int row = current.row();
-            int column = current.column();
-            if(visited.contains(current)) continue;
-            visited.add(current);
-            
-            if(forest[row][column] == 't'){
-                char[] treeArray = new char[36];
-                trees.add(treeArray);
-            } 
-
+            finalTime = Math.max(finalTime, current.time());
             List<Location> neighbors = possibleMoves(forest, current);
 
-            if (!possibleMoves(forest, current).isEmpty()) finalTime++;
-
-            for(Location neighbor : neighbors){
-                queue.add(neighbor);
+            for (Location neighbor : neighbors) {
+                int row = neighbor.row();
+                int column = neighbor.column();
+                if (!visited[row][column]) {
+                    visited[row][column] = true;
+                    Location nextTree = new Location(row, column, current.time() + 1);
+                    queue.add(nextTree);
+                }
             }
         }
 
@@ -89,11 +85,14 @@ public class Fire {
         List<Location> validMoves = new ArrayList<>();
 
         for(int[] move : moves){
-            Location possibleMove = new Location(current.row() + move[0], current.column() + move[1]);
-            if(possibleMove.row() >= 0 && possibleMove.row() < forest.length &&
-               possibleMove.column() >= 0 && possibleMove.column() < forest[0].length &&
-               forest[possibleMove.row()][possibleMove.column()] != '.'){
-                validMoves.add(possibleMove);
+            int nextRow = current.row() + move[0];
+            int nextColumn = current.column() + move[1];
+
+            if (nextRow >= 0 && nextRow < forest.length &&
+                nextColumn >= 0 && nextColumn < forest[nextRow].length) {
+                if (forest[nextRow][nextColumn] == 't') {
+                    validMoves.add(new Location(nextRow, nextColumn, 0));
+                }
             }
         }
 
@@ -101,16 +100,12 @@ public class Fire {
     }
 
     public static Location firstTreeLocation(char[][] forest, int matchR, int matchC) {
-        Location location = null;
-        for (int r = 0; r < forest.length; r++) {
-            for (int c = 0; c < forest[r].length; c++) {
-                if (r == matchR && c == matchC) {
-                    location = new Location(r, c);
-                }
-            }
+        if (forest == null || matchR < 0 || matchR >= forest.length ||
+            forest[matchR] == null || matchC < 0 || matchC >= forest[matchR].length ||
+            forest[matchR][matchC] != 't')  {
+            throw new NoTreesException();
         }
-        if (location == null) throw new NoTreesException();
 
-        return location;
+        return new Location(matchR, matchC, 0);
     }
 }
